@@ -1,0 +1,31 @@
+import json
+with open("drugbank.json", 'r') as f:
+    db = json.loads(f.read())
+print(type(db))
+
+with open ("miaoji.txt", "w") as w:
+    for a in db['{http://www.drugbank.ca}drugbank']['{http://www.drugbank.ca}drug']:
+        if type(a['{http://www.drugbank.ca}drugbank-id']) is list:
+            if '{http://www.drugbank.ca}atc-codes' in a.keys() :
+                if '{http://www.drugbank.ca}atc-code' in a['{http://www.drugbank.ca}atc-codes'].keys():
+                    if type(a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']) == dict:
+                        w.write(a['{http://www.drugbank.ca}drugbank-id'][0]['#text'] + "\t" + a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']['@code'][0]+ "\n" )
+                    elif type(a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']) == list:
+                        w.write(a['{http://www.drugbank.ca}drugbank-id'][0]['#text'] + "\t" + a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code'][0]['@code'][0] + "\n") 
+                else:
+                    w.write(a['{http://www.drugbank.ca}drugbank-id'][0]['#text'] + "\t" + "None" + "\n")
+            else:
+                w.write(a['{http://www.drugbank.ca}drugbank-id'][0]['#text'] + "\t" + "None" + "\n")
+
+        elif type(a['{http://www.drugbank.ca}drugbank-id']) is dict:
+            if '{http://www.drugbank.ca}atc-codes' in a.keys() :
+                if '{http://www.drugbank.ca}atc-code' in a['{http://www.drugbank.ca}atc-codes'].keys():
+                    if type(a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']) == dict:
+                        w.write(a['{http://www.drugbank.ca}drugbank-id']['#text'] + "\t" + a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']['@code'][0] + "\n" )
+                    elif type(a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code']) == list:
+                        w.write(a['{http://www.drugbank.ca}drugbank-id']['#text'] + "\t" + a['{http://www.drugbank.ca}atc-codes']['{http://www.drugbank.ca}atc-code'][0]['@code'][0] + "\n") 
+                else:
+                    w.write(a['{http://www.drugbank.ca}drugbank-id']['#text'] + "\t" + "None" + "\n")
+            else:
+                w.write(a['{http://www.drugbank.ca}drugbank-id']['#text'] + "\t" + "None" + "\n")
+           
