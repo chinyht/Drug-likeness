@@ -1,0 +1,19 @@
+#!/usr/bin/env python 
+# -*- coding:utf-8 -*-
+import seaborn as sns
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# a = np.random.rand(4,3)
+
+train = pd.read_csv("oral_all.csv")
+
+plt.figure(figsize=(14,12))
+plt.title('Pearson Correlation of Features',y=1.05,size=15)
+sns.heatmap(train.astype(float).corr(),linewidths=0.1,vmax=1.0,
+            square=True,linecolor='white',annot=False)
+plt.xticks(rotation=90)    # 将字体进行旋转
+plt.yticks(rotation=360)
+plt.savefig("1.png")
+plt.show()
