@@ -1,0 +1,30 @@
+import numpy
+from numpy import *
+import numpy as np
+from sklearn.manifold import TSNE
+
+class chj_data(object):
+    def __init__(self,data,target):
+        self.data=data
+        self.target=target
+
+def chj_load_file(fdata,ftarget):
+    data=numpy.loadtxt(fdata, dtype=float32)
+    target=numpy.loadtxt(ftarget, dtype=int32)
+
+    print(data.shape)
+    print(target.shape)
+    # pexit()
+
+    res=chj_data(data,target)
+    return res
+
+fdata="MIAOJI.txt"
+ftarget="TARGET.txt"    
+
+iris = chj_load_file(fdata,ftarget)
+
+X_tsne = TSNE(n_components=3,learning_rate=100).fit_transform(iris.data)
+
+numpy.savetxt("result.txt", X_tsne)
+#origin 
