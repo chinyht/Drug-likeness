@@ -1,0 +1,172 @@
+import pandas as pd
+import numpy as np
+import math as math
+import numpy as np
+from numpy import *
+from scipy.stats import bartlett
+from factor_analyzer import *
+import numpy.linalg as nlg
+from sklearn.cluster import KMeans
+from matplotlib import cm
+import matplotlib.pyplot as plt
+from numpy.linalg import svd
+
+df = pd.read_csv("NN_mordred.csv")
+    # print(df)
+df = df.iloc[:, 1: ]
+df = df.ix[:, (df != df.ix[0]).any()]
+df2 = (df - df.mean()) / df.std()
+print("\n原始数据:\n",df2)
+    # print(df2)
+    
+df2_corr = df2.corr()
+print("\n相关系数:\n",df2_corr)
+
+cmap = cm.Blues
+    # cmap = cm.hot_r
+fig=plt.figure()
+ax=fig.add_subplot(111)
+map = ax.imshow(df2_corr, interpolation='nearest', cmap=cmap, vmin=-1, vmax=1)
+plt.title('correlation coefficient--headmap')
+ax.set_yticks(range(len(df2_corr.columns)))
+ax.set_yticklabels(df2_corr.columns)
+ax.set_xticks(range(len(df2_corr)))
+ax.set_xticklabels(df2_corr.columns)
+plt.colorbar(map)
+plt.show()
+
+eig_value , eig_vector=nlg.eig(df2_corr)
+eig = pd.DataFrame()
+eig['names'] = df2.columns
+eig['eig_value'] = eig_value
+
+n_f = df2.shape[1]
+for i in range(1, df2.shape[1] + 1):
+    if eig['eig_value'][:i].sum()/eig['eig_value'].sum()>=0.8:
+        print(i)
+        break
+for i in range(38):
+    exec(
+        "col" + 
+        str(i) + 
+        "=list(sqrt(eig_value[" +
+        str(i) +
+        "])*eig_vector[:," + 
+        str(i)+ 
+        "])"
+    )
+A = pd.DataFrame([
+    col0,
+    col1,
+    col2,
+    col3,
+    col4,
+    col5,
+    col6,
+    col7,
+    col8,
+    col9,
+    col10,
+    col11,
+    col12,
+    col13,
+    col14,
+    col15,
+    col16,
+    col17,
+    col18,
+    col19,
+    col20,
+    col21,
+    col22,
+    col23,
+    col24,
+    col25,
+    col26,
+    col27,
+    col28,
+    col29,
+    col30,
+    col31,
+    col32,
+    col33,
+    col34,
+    col35,
+    col36,
+    col37
+]).T
+A.columns = [
+    'factor1',
+    'factor2',
+    'factor3',
+    'factor4',
+    'factor5',
+    'factor6',
+    'factor7',
+    'factor8',
+    'factor9',
+    'factor10',
+    'factor11',
+    'factor12',
+    'factor13',
+    'factor14',
+    'factor15',
+    'factor16',
+    'factor17',
+    'factor18',
+    'factor19',
+    'factor20',
+    'factor21',
+    'factor22',
+    'factor23',
+    'factor24',
+    'factor25',
+    'factor26',
+    'factor27',
+    'factor28',
+    'factor29',
+    'factor30',
+    'factor31',
+    'factor32',
+    'factor33',
+    'factor34',
+    'factor35',
+    'factor36',
+    'factor37',
+    'factor38',
+] 
+
+h=np.zeros(n_f)
+D=np.array(np.eye(n_f))
+A=np.array(A)
+for i in range(n_f):
+    a=A[i,:]*A[i,:].T
+    h[i]=a[0]
+    D[i,i]=1-a[0]
+
+def varimax(Phi, gamma = 1.0, q = 20, tol = 1e-6):
+    from scipy import eye, asarray, dot, sum
+    p,k = Phi.shape
+    R = eye(k)
+    d=0
+    for i in range(q):
+        d_old = d
+        Lambda = dot(Phi, R)
+        u,s,vh = svd(dot(Phi.T,asarray(Lambda)**3 - (gamma/p) * dot(Lambda, diag(diag(dot(Lambda.T,Lambda))))))
+        R = dot(u,vh)
+        d = sum(s)
+        if d_old!=0 and d/d_old < 1 + tol: break
+    return dot(Phi, R)
+    
+rotation_mat = varimax(A)
+rotation_mat = pd.DataFrame(rotation_mat)
+rotation_mat.index = df2.columns
+
+rotation_mat
+
+ls_factors = []
+abs_rot = rotation_mat.abs()
+for i in range(rotation_mat.shape[1]):
+    ls_factors.append(abs_rot[i].argmax())
+    
+ls_factors
